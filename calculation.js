@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Calculation = require('./Calculation');
-const auth = require('./authMiddleware');
+const authenticate = require("./authMiddleware");
+
 
 function sumDigits(n) {
     return n * (n + 1) / 2;
