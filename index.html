@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sum Words App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f6fa;
+      margin: 0;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      background: #e7f1fb;
+      margin-bottom: 8px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sum Words App</h1>
+
+  <div class="card" id="authCard">
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Username" />
+    <input type="password" id="loginPassword" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <div class="error" id="loginError"></div>
+
+    <h2>or Register</h2>
+    <input type="text" id="registerUsername" placeholder="Username" />
+    <input type="password" id="registerPassword" placeholder="Password" />
+    <button onclick="register()">Register</button>
+    <div class="error" id="registerError"></div>
+  </div>
+
+  <div class="card hidden" id="calcCard">
+    <h2>Welcome! Calculate Sum of Digits</h2>
+    <input type="number" id="inputNumber" placeholder="Enter a number" />
+    <button onclick="calculate()">Calculate</button>
+    <div id="resultOutput"></div>
+
+    <h3>Last 5 Calculations</h3>
+    <ul id="historyList"></ul>
+  </div>
+
+  <script>
+    const API = 'http://localhost:3001/api';
+    let token = '';
+
+    function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          token = data.token;
+          document.getElementById('authCard').classList.add('hidden');
+          document.getElementById('calcCard').classList.remove('hidden');
+          loadHistory();
+        } else {
+          document.getElementById('loginError').innerText = data.msg || 'Login failed';
+        }
+      });
+    }
+
+    function register() {
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+      fetch(`${API}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          token = data.token;
+          document.getElementById('authCard').classList.add('hidden');
+          document.getElementById('calcCard').classList.remove('hidden');
+          loadHistory();
+        } else {
+          document.getElementById('registerError').innerText = data.msg || 'Registration failed';
+        }
+      });
+    }
+
+    function calculate() {
+      const num = parseInt(document.getElementById('inputNumber').value);
+      if (isNaN(num)) {
+        alert('Please enter a valid number');
+        return;
+      }
+
+      fetch(`${API}/calc/sum`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({ number: num })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('resultOutput').innerText = `Sum: ${data.result}`;
+        loadHistory();
+      });
+    }
+
+    function loadHistory() {
+      fetch(`${API}/calc/history`, {
+        headers: {
+          'Authorization': token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('historyList');
+        list.innerHTML = '';
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.innerText = `Input: ${item.input}, Sum: ${item.result}`;
+          list.appendChild(li);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
+
