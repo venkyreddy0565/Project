@@ -67,7 +67,7 @@
     <button onclick="login()">Login</button>
     <div class="error" id="loginError"></div>
 
-    <h2>or Register</h2>
+    <h2>Register</h2>
     <input type="text" id="registerUsername" placeholder="Username" />
     <input type="password" id="registerPassword" placeholder="Password" />
     <button onclick="register()">Register</button>
@@ -91,7 +91,7 @@
     function login() {
       const username = document.getElementById('loginUsername').value;
       const password = document.getElementById('loginPassword').value;
-      fetch(`https://project-bbau.onrender.com/auth/login`, {
+      fetch(`https://project-bbau.onrender.com/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -112,7 +112,7 @@
     function register() {
       const username = document.getElementById('registerUsername').value;
       const password = document.getElementById('registerPassword').value;
-      fetch(`https://project-bbau.onrender.com/auth/register`, {
+      fetch(`https://project-bbau.onrender.com/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -137,7 +137,7 @@
         return;
       }
 
-      fetch(`https://project-bbau.onrender.com/calc/sum`, {
+      fetch(`https://project-bbau.onrender.com/sum`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@
     }
 
     function loadHistory() {
-      fetch(`https://project-bbau.onrender.com/calc/history`, {
+      fetch(`https://project-bbau.onrender.com/history`, {
         headers: {
           'Authorization': token
         }
