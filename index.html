@@ -137,7 +137,7 @@
         return;
       }
 
-      fetch(`${API}/sum`, {
+      fetch(`${API}/calc/sum`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@
     }
 
     function loadHistory() {
-      fetch(`${API}/history`, {
+      fetch(`${API}/calc/history`, {
         headers: {
           'Authorization': token
         }
